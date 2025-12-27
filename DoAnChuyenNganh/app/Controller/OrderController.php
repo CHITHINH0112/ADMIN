@@ -6,7 +6,8 @@ header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 require_once("./app/Service/CartService.php");
-require_once("./app/Service/ShipProviderService.php");
+// require_once "./app/Service/ShipProviderService.php";
+
 
 
 
@@ -21,7 +22,7 @@ class OrderController
 {
     private $orderService;
     private $cartService;
-    private $shipService;
+    // private $shipService;
 
     public function __construct()
     {
@@ -29,16 +30,14 @@ class OrderController
 
         $this->orderService = new OrderService();
         $this->cartService = new CartService();
-        $this->shipService = new ShipProviderService();
+        // $this->shipService = new ShipProviderService();
     }
 
-    /*** ADMIN METHODS ***/
-
-    // Lấy tất cả đơn hàng
+   
     public function index()
-    {
-        echo json_encode($this->orderService->getAllOrders());
-    }
+{
+    echo json_encode($this->orderService->getAll());
+}
 
 
     // Lấy đơn hàng của 1 user
@@ -71,25 +70,40 @@ class OrderController
         echo json_encode($this->orderService->clearOrderItems($order_id));
     }
 
-    // Cập nhật trạng thái đơn
-    public function updateStatus()
-    {
-        $body = json_decode(file_get_contents("php://input"), true);
-        echo json_encode($this->orderService->updateStatus(
-            $body["order_id"],
-            $body["status"]
-        ));
+  public function updateStatus($id)
+{
+    AdminMiddleware::requireAdmin();
+
+    $body = json_decode(file_get_contents("php://input"), true);
+    $status = $body['status'] ?? null;
+
+    if (!$status) {
+        http_response_code(400);
+        echo json_encode(["error" => "Missing status"]);
+        return;
     }
 
-    // Cập nhật trạng thái giao hàng
-    public function updateDelivery()
-    {
-        $body = json_decode(file_get_contents("php://input"), true);
-        echo json_encode($this->orderService->updateDeliveryStatus(
-            $body["order_id"],
-            $body["delivery_status"]
-        ));
+    $ok = $this->orderService->updateStatus($id, $status);
+    echo json_encode(["success" => $ok]);
+}
+
+public function updateDelivery($id)
+{
+    AdminMiddleware::requireAdmin();
+
+    $body = json_decode(file_get_contents("php://input"), true);
+    $delivery = $body['delivery_status'] ?? null;
+
+    if (!$delivery) {
+        http_response_code(400);
+        echo json_encode(["error" => "Missing delivery_status"]);
+        return;
     }
+
+    $ok = $this->orderService->updateDeliveryStatus($id, $delivery);
+    echo json_encode(["success" => $ok]);
+}
+
 
     // Cập nhật đơn vị vận chuyển
     public function updateShipping()
@@ -265,4 +279,19 @@ class OrderController
         $res = $this->orderService->getOrder($order_id);
         echo json_encode($res);
     }
+
+
+
+
+
+public function detail($id)
+{
+    AdminMiddleware::requireAdmin();
+    $data = $this->orderService->detail($id);
+    echo json_encode($data);
+}
+
+
+
+
 }

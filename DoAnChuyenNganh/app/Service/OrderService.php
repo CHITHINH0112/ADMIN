@@ -129,17 +129,18 @@ class OrderService
     }
 
     // Các hàm Update giữ nguyên
-    public function updateStatus($order_id, $status)
-    {
-        $this->orderModel->updateStatus($order_id, $status);
-        return ["message" => "Status updated"];
-    }
+    public function updateStatus($id, $status)
+{
+    AdminMiddleware::requireAdmin();
+    return $this->orderModel->updateStatus($id, $status);
+}
 
-    public function updateDeliveryStatus($order_id, $delivery_status)
-    {
-        $this->orderModel->updateDeliveryStatus($order_id, $delivery_status);
-        return ["message" => "Delivery status updated"];
-    }
+public function updateDeliveryStatus($id, $delivery_status)
+{
+    AdminMiddleware::requireAdmin();
+    return $this->orderModel->updateDeliveryStatus($id, $delivery_status);
+}
+
 
     public function updateShipping($order_id, $shipping_id)
     {
@@ -264,4 +265,23 @@ class OrderService
         if (!$paymentInfo) return 'COD'; // Mặc định nếu không tìm thấy
         return $paymentInfo['method'] ?? $paymentInfo['name'] ?? 'COD';
     }
+
+public function getAll()
+{
+    AdminMiddleware::requireAdmin();
+    return $this->orderModel->getAllWithUser();
+}
+
+public function getDetail($id)
+{
+    AdminMiddleware::requireAdmin();
+    return $this->orderModel->getOrderDetail($id);
+}
+
+public function detail($id)
+{
+    AdminMiddleware::requireAdmin();
+    return $this->orderModel->getDetail($id);
+}
+
 }

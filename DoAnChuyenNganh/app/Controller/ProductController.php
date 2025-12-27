@@ -30,10 +30,6 @@ class ProductController
     );
 }
 
-
-   
-
-
     // UPDATE (JSON ONLY)
     // public function update()
     // {
@@ -61,6 +57,4 @@ public function update()
         $this->service->update($_POST, $_FILES)
     );
 }
-
-
 }

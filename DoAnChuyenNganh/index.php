@@ -30,6 +30,8 @@ require_once "app/Controller/AuthController.php";
 require_once "app/Controller/SubcategoryController.php";
 require_once "app/Controller/UserController.php";
 require_once "app/Controller/MetaController.php";
+require_once "app/Controller/OnlyShipController.php";
+
 
 if (isset($_GET['url'])) {
     $parts = explode('/', trim($_GET['url'], '/'));
@@ -54,6 +56,8 @@ $controllers = [
     "order" => OrderController::class,
     "payment" => PaymentController::class,
     "ship" => ShipProviderController::class,
+    "only-ship" => OnlyShipController::class,
+
     "auth" => AuthController::class,
     "subcategory" => SubcategoryController::class,
     "user" => UserController::class,

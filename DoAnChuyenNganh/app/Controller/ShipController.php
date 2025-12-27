@@ -52,4 +52,11 @@ class ShipProviderController
     {
         echo json_encode($this->shipService->getprice($id));
     }
+
+    public function updatePrice()
+{
+    $body = json_decode(file_get_contents("php://input"), true);
+    echo json_encode($this->shipService->updatePrice($body));
+}
+
 }

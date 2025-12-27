@@ -61,4 +61,14 @@ class ShipProviderModel
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? $row['price'] : null;
     }
+
+    // Chỉ cập nhật giá ship (admin)
+public function updatePrice($id, $price)
+{
+    error_log("RUN updatePrice ID=$id PRICE=$price");
+    $sql = "UPDATE shipping_providers SET price = ? WHERE id = ?";
+    $stmt = $this->con->prepare($sql);
+    return $stmt->execute([$price, $id]);
+}
+
 }

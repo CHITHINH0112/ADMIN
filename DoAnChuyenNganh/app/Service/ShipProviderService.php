@@ -11,9 +11,14 @@ class ShipProviderService
     private $shipModel;
 
     public function __construct()
-    {
+    { error_log("LOAD ShipProviderService");
         $this->shipModel = new ShipProviderModel();
+        
+   
+   
     }
+  
+
 
     public function getAll()
     {
@@ -39,18 +44,38 @@ class ShipProviderService
         return $ok ? ["message" => "Shipping provider added successfully"] : ["error" => "Failed to add shipping provider"];
     }
 
-    public function update($data)
-    {
-        AdminMiddleware::requireAdmin();
-        if (!isset($data['id'])) return ["error" => "Missing id"];
-        $ok = $this->shipModel->update(
-            $data['id'],
-            $data['name'],
-            $data['phone'] ?? null,
-            $data['price'] ?? 0
-        );
-        return $ok ? ["message" => "Shipping provider updated successfully"] : ["error" => "Failed to update shipping provider"];
+    // public function update($data)
+    // {
+    //     AdminMiddleware::requireAdmin();
+    //     if (!isset($data['id'])) return ["error" => "Missing id"];
+    //     $ok = $this->shipModel->update(
+    //         $data['id'],
+    //         $data['name'],
+    //         $data['phone'] ?? null,
+    //         $data['price'] ?? 0
+    //     );
+    //     return $ok ? ["message" => "Shipping provider updated successfully"] : ["error" => "Failed to update shipping provider"];
+    // }
+    
+public function updatePrice($data)
+{
+    AdminMiddleware::requireAdmin();
+
+    if (!isset($data['id']) || !isset($data['price'])) {
+        return ["error" => "Missing id or price"];
     }
+
+    $ok = $this->shipModel->updatePrice(
+        $data['id'],
+        $data['price']
+    );
+
+    return $ok
+        ? ["message" => "Cập nhật giá ship thành công"]
+        : ["error" => "Cập nhật thất bại"];
+}
+
+
 
     public function delete($id)
     {
@@ -63,4 +88,8 @@ class ShipProviderService
         $price = $this->shipModel->getPrice($id);
         return $price ? ["message" => "success", "price" => $price] : ["error" => "Failed"];
     }
+
+
+
+
 }
