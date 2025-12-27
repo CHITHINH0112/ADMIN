@@ -1,5 +1,5 @@
 <?php
-require_once("./core/database.php");
+/*require_once("./core/database.php");
 class Subcategory
 {
     private $conn;
@@ -63,5 +63,75 @@ class Subcategory
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $this->id);
         return $stmt->execute();
+    }
+}
+*/
+
+
+require_once("./core/database.php");
+
+class SubcategoryModel
+{
+    private $conn;
+    private $table = "subcategory";
+
+    public function __construct()
+    {
+        $this->conn = (new Database())->connect();
+    }
+
+    public function getAll()
+    {
+        $sql = "
+            SELECT s.*, c.name AS category_name
+            FROM subcategory s
+            JOIN categories c ON s.category_id = c.id
+            ORDER BY c.id, s.id
+        ";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getById($id)
+    {
+        $stmt = $this->conn->prepare(
+            "SELECT * FROM subcategory WHERE id = ?"
+        );
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function create($name, $category_id)
+    {
+        $stmt = $this->conn->prepare(
+            "INSERT INTO subcategory (name, category_id) VALUES (?, ?)"
+        );
+        return $stmt->execute([$name, $category_id]);
+    }
+
+    public function update($id, $name, $category_id)
+    {
+        $stmt = $this->conn->prepare(
+            "UPDATE subcategory SET name = ?, category_id = ? WHERE id = ?"
+        );
+        return $stmt->execute([$name, $category_id, $id]);
+    }
+
+    public function delete($id)
+    {
+        $stmt = $this->conn->prepare(
+            "DELETE FROM subcategory WHERE id = ?"
+        );
+        return $stmt->execute([$id]);
+    }
+
+    public function getByCategory($category_id)
+    {
+        $stmt = $this->conn->prepare(
+            "SELECT * FROM subcategory WHERE category_id = ?"
+        );
+        $stmt->execute([$category_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

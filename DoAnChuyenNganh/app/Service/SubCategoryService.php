@@ -1,5 +1,5 @@
 <?php
-require_once("./app/Model/SubcategoryModel.php");
+/*require_once("./app/Model/SubcategoryModel.php");
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
@@ -14,17 +14,13 @@ class SubcategoryService
         $this->subcategoryModel = new Subcategory();
     }
 
-    /**
-     * Lấy tất cả subcategory
-     */
+   
     public function getAll()
     {
         return $this->subcategoryModel->getAll();
     }
 
-    /**
-     * Lấy subcategory theo ID
-     */
+   
     public function getById($id)
     {
         $subcategory = $this->subcategoryModel->getById($id);
@@ -42,9 +38,7 @@ class SubcategoryService
         ];
     }
 
-    /**
-     * Tạo subcategory mới
-     */
+    
     public function create($name, $category_id)
     {
         AdminMiddleware::requireAdmin();
@@ -57,9 +51,7 @@ class SubcategoryService
         ];
     }
 
-    /**
-     * Cập nhật subcategory
-     */
+    
     public function update($id, $name, $category_id)
     {
         AdminMiddleware::requireAdmin();
@@ -72,9 +64,7 @@ class SubcategoryService
         ];
     }
 
-    /**
-     * Xóa subcategory
-     */
+   
     public function delete($id)
     {
         AdminMiddleware::requireAdmin();
@@ -87,9 +77,7 @@ class SubcategoryService
         ];
     }
 
-    /**
-     * Lấy tất cả subcategory theo category_id
-     */
+   
     public function getByCategory($category_id)
     {
         $subcategories = array_filter($this->subcategoryModel->getAll(), function ($subcat) use ($category_id) {
@@ -100,5 +88,71 @@ class SubcategoryService
             "status" => "success",
             "data" => array_values($subcategories)
         ];
+    }
+}
+*/
+
+require_once("./app/Model/SubcategoryModel.php");
+require_once("./app/Middleware/AdminMiddleware.php");
+
+class SubcategoryService
+{
+    private $model;
+
+    public function __construct()
+    {
+        $this->model = new SubcategoryModel();
+    }
+
+    public function getAll()
+    {
+        return $this->model->getAll();
+    }
+
+    public function getById($id)
+    {
+        $data = $this->model->getById($id);
+
+        if (!$data) {
+            return ["success" => false, "message" => "Not found"];
+        }
+
+        return ["success" => true, "data" => $data];
+    }
+
+    public function create($name, $category_id)
+    {
+        AdminMiddleware::requireAdmin();
+
+        if (!$name || !$category_id) {
+            return ["success" => false, "message" => "Missing data"];
+        }
+
+        return [
+            "success" => $this->model->create($name, $category_id)
+        ];
+    }
+
+    public function update($id, $name, $category_id)
+    {
+        AdminMiddleware::requireAdmin();
+
+        return [
+            "success" => $this->model->update($id, $name, $category_id)
+        ];
+    }
+
+    public function delete($id)
+    {
+        AdminMiddleware::requireAdmin();
+
+        return [
+            "success" => $this->model->delete($id)
+        ];
+    }
+
+    public function getByCategory($category_id)
+    {
+        return $this->model->getByCategory($category_id);
     }
 }

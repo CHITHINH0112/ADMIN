@@ -31,14 +31,10 @@ require_once "app/Controller/SubcategoryController.php";
 require_once "app/Controller/UserController.php";
 require_once "app/Controller/MetaController.php";
 require_once "app/Controller/OnlyShipController.php";
-
+require_once "app/Controller/ReportController.php";
 
 if (isset($_GET['url'])) {
     $parts = explode('/', trim($_GET['url'], '/'));
-    /////////////////////////////
-    // $controllerName = $parts[0] ?? 'product';
-    // $action = $parts[1] ?? 'index';
-    // $id = $parts[2] ?? null;
     $controllerName = trim($parts[0] ?? 'product');
 $action = trim($parts[1] ?? 'index');
 $id = isset($parts[2]) ? trim($parts[2]) : null;
@@ -57,11 +53,11 @@ $controllers = [
     "payment" => PaymentController::class,
     "ship" => ShipProviderController::class,
     "only-ship" => OnlyShipController::class,
-
     "auth" => AuthController::class,
     "subcategory" => SubcategoryController::class,
     "user" => UserController::class,
-    "meta" => MetaController::class
+    "meta" => MetaController::class,
+    "report" => ReportController::class
 
 ];
 

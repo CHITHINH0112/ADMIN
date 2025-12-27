@@ -1,5 +1,5 @@
 <?php
-require_once("./app/Service/CategoryService.php");
+ /*require_once("./app/Service/CategoryService.php");
 require_once("./app/Middleware/AdminMiddleware.php");
 // Cho phép frontend ở localhost:5173 gọi API
 header("Access-Control-Allow-Origin: http://localhost:5173");
@@ -48,5 +48,94 @@ class CategoryController
     public function delete($id)
     {
         echo json_encode($this->categoryService->delete($id));
+    }
+}
+
+*/
+
+
+
+require_once "./app/Service/CategoryService.php";
+require_once "./app/Middleware/AdminMiddleware.php";
+
+class CategoryController
+{
+    private $service;
+
+    public function __construct()
+    {
+        $this->service = new CategoryService();
+    }
+
+    // GET category/getAll
+    public function getAll()
+    {
+        echo json_encode($this->service->getAll());
+    }
+
+    // GET category/getById/{id}
+    public function getById($id)
+    {
+        echo json_encode($this->service->getById($id));
+    }
+
+    // POST category/create
+    public function create()
+    {
+        AdminMiddleware::requireAdmin();
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (!isset($data['name'])) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Missing name"
+            ]);
+            return;
+        }
+
+        echo json_encode(
+            $this->service->create(
+                $data['name'],
+                $data['description'] ?? null
+            )
+        );
+    }
+
+    // PUT category/update/{id}
+    public function update($id)
+    {
+            AdminMiddleware::requireAdmin(); // 👈 DÒNG QUAN TRỌNG
+
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        echo json_encode(
+            $this->service->update(
+                $id,
+                $data['name'],
+                $data['description'] ?? null
+            )
+        );
+    }
+
+    // DELETE category/delete/{id}
+    public function delete($id)
+    {
+            AdminMiddleware::requireAdmin(); // 👈 DÒNG QUAN TRỌNG
+
+        echo json_encode(
+            $this->service->delete($id)
+        );
+    }
+
+    // POST category/updateOrder
+    public function updateOrder()
+    {
+            AdminMiddleware::requireAdmin(); // 👈 DÒNG QUAN TRỌNG
+
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        echo json_encode(
+            $this->service->updateOrder($data)
+        );
     }
 }

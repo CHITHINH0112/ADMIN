@@ -1,5 +1,5 @@
 <?php
-require_once("./app/Model/CategoryModel.php");
+/*require_once("./app/Model/CategoryModel.php");
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
@@ -72,5 +72,57 @@ class CategoryService
             "status" => $ok ? "success" : "error",
             "message" => $ok ? "Category deleted" : "Delete failed"
         ];
+    }
+}
+
+
+
+
+
+*/
+
+require_once __DIR__ . "/../Model/CategoryModel.php";
+
+class CategoryService
+{
+    private $model;
+
+    public function __construct()
+    {
+        $this->model = new CategoryModel();
+    }
+
+    public function getAll()
+    {
+        return $this->model->getAll();
+    }
+
+    public function getById($id)
+    {
+        return $this->model->getById($id);
+    }
+
+    public function create($name, $description)
+    {
+        $this->model->create($name, $description);
+        return ["success" => true];
+    }
+
+    public function update($id, $name, $description)
+    {
+        $this->model->update($id, $name, $description);
+        return ["success" => true];
+    }
+
+    public function delete($id)
+    {
+        $this->model->delete($id);
+        return ["success" => true];
+    }
+
+    public function updateOrder($orders)
+    {
+        $this->model->updateOrder($orders);
+        return ["success" => true];
     }
 }
